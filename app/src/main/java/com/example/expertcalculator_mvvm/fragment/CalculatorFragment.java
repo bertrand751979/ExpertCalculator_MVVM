@@ -1,7 +1,6 @@
-package com.example.expertcalculator_mvvm;
+package com.example.expertcalculator_mvvm.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager.widget.ViewPager;
 
+import com.example.expertcalculator_mvvm.viewModel.ExpertCalculatorViewModel;
+import com.example.expertcalculator_mvvm.model.Operation;
+import com.example.expertcalculator_mvvm.R;
 import com.google.android.material.card.MaterialCardView;
 
 public class CalculatorFragment extends Fragment {
@@ -84,7 +85,6 @@ public class CalculatorFragment extends Fragment {
         editOperation = view.findViewById(R.id.amount);
         matEquals = view.findViewById(R.id.mat_card_equals);
         reset = view.findViewById(R.id.mat_card_reset);
-
         mat0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -215,7 +215,6 @@ public class CalculatorFragment extends Fragment {
                    editOperation.setText(operator);
                    if(number!=null){
                        number="";
-                       //editOperation.setText(number);
                        number=operator+number;
                        editOperation.setText(number);
                    }
@@ -231,7 +230,6 @@ public class CalculatorFragment extends Fragment {
                     editOperation.setText(operator);
                 if(number!=null) {
                     number = "";
-                    //editOperation.setText(number);
                     number = operator + number;
                     editOperation.setText(number);
                     }
@@ -248,7 +246,6 @@ public class CalculatorFragment extends Fragment {
                 }
                 if(number!=null){
                     number="";
-                    //editOperation.setText(number);
                     number = operator + number;
                     editOperation.setText(number);
                 }
@@ -264,7 +261,6 @@ public class CalculatorFragment extends Fragment {
                 }
                 if(number!=null){
                     number="";
-                    //editOperation.setText(number);
                     number = operator + number;
                     editOperation.setText(number);
                 }
@@ -274,9 +270,7 @@ public class CalculatorFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 viewModelExpertCalculator.totCalcul(editOperation.getText().toString(),operator);
-                //ApplicationData.getInstance().getResult();
-                //editOperation.setText(String.valueOf(result));
-
+                viewModelExpertCalculator.toPostErrorMessage();
             }
         });
         reset.setOnClickListener(new View.OnClickListener() {
@@ -288,77 +282,7 @@ public class CalculatorFragment extends Fragment {
             }
         });
         setViewResult();
-
     }
-
-    /*private void sort(){
-       String str =editOperation.getText().toString();
-        if(str.contains("+")){
-            operator="\\+";
-            String[] tableNumbers = str.split(operator);
-             result = Integer.valueOf(tableNumbers[0])+Integer.valueOf(tableNumbers[1]);
-            for(String separateNumbers:tableNumbers){
-                Toast.makeText(CalculatorFragment.this.getContext(),separateNumbers, Toast.LENGTH_SHORT).show();
-                Log.d("les chiffres",separateNumbers);
-            }
-            if(editOperation.getText().toString()!=null){
-                editOperation.setText(String.valueOf(result));
-                ApplicationData.getInstance().setResult(result);
-
-            }
-        }
-
-        if(str.toLowerCase().contains("/")){
-            operator="/";
-            String[] tableNumbers = str.split(operator);
-            //int result=0; //= Integer.valueOf(tableNumbers[0])/Integer.valueOf(tableNumbers[1]);
-            for(String separateNumbers:tableNumbers){
-                Toast.makeText(CalculatorFragment.this.getContext(),separateNumbers, Toast.LENGTH_SHORT).show();
-                Log.d("les chiffres",separateNumbers);
-            }
-             //result; //= Integer.valueOf(tableNumbers[0])/Integer.valueOf(tableNumbers[1]);
-            if(editOperation.getText().toString()!=null){
-                editOperation.setText(String.valueOf(result));
-            } if(tableNumbers[1].equals("0")){
-            editOperation.setText("ERROR");
-             }else if(!tableNumbers[1].equals("0")){
-                result = Integer.valueOf(tableNumbers[0])/Integer.valueOf(tableNumbers[1]);
-                editOperation.setText(String.valueOf(result));
-                ApplicationData.getInstance().setResult((int) result);
-                //(double)Math.round(0.912385 * 100000) / 100000 //Le nombre sera arrondi à 0,91239.
-            }
-        }
-
-        if(str.contains("*")){
-            operator= "\\*";
-            String[] tableNumbers = str.split(operator);
-             result =Integer.valueOf(tableNumbers[0])*Integer.valueOf(tableNumbers[1]);
-            Log.d("result", String.valueOf(result));
-            for(String separateNumbers:tableNumbers){
-                Toast.makeText(CalculatorFragment.this.getContext(), separateNumbers, Toast.LENGTH_SHORT).show();
-                Log.d("les chiffres", separateNumbers);
-            }
-            if(editOperation.getText().toString()!=null){
-                editOperation.setText(String.valueOf(result));
-                ApplicationData.getInstance().setResult(result);
-            }
-        }
-
-        if(str.contains("-")){
-            operator= "-";
-            String[] tableNumbers = str.split(operator);
-             result =Integer.valueOf(tableNumbers[0])-Integer.valueOf(tableNumbers[1]);
-            Log.d("result", String.valueOf(result));
-            for(String separateNumbers:tableNumbers){
-                    Toast.makeText(CalculatorFragment.this.getContext(), separateNumbers, Toast.LENGTH_SHORT).show();
-                    Log.d("les chiffres", separateNumbers);
-            }
-            if(editOperation.getText().toString()!=null){
-                editOperation.setText(String.valueOf(result));
-                ApplicationData.getInstance().setResult(result);
-            }
-        }
-    }*/
 
     private void reset(){
         editOperation.setText(null);
@@ -368,11 +292,22 @@ public class CalculatorFragment extends Fragment {
     }
 
     private void setViewResult(){
-        viewModelExpertCalculator.operationResultLiveData.observe(getViewLifecycleOwner(), new Observer<Integer>() {
+        viewModelExpertCalculator.operationResultLiveData.observe(getViewLifecycleOwner(), new Observer<Double>() {
             @Override
-            public void onChanged(Integer res) {
+            public void onChanged(Double res) {
                 editOperation.setText(String.valueOf(res));
             }
+        });
+
+        viewModelExpertCalculator.errorMessageLiveData.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                    if(aBoolean==true){
+                        editOperation.setText("ERROR");
+                    }else{
+                    }
+                }
+
         });
     }
 

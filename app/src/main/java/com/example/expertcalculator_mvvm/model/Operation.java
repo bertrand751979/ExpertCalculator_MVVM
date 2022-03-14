@@ -1,4 +1,4 @@
-package com.example.expertcalculator_mvvm;
+package com.example.expertcalculator_mvvm.model;
 
 public class Operation {
 

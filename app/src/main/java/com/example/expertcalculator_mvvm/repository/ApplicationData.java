@@ -1,9 +1,11 @@
-package com.example.expertcalculator_mvvm;
+package com.example.expertcalculator_mvvm.repository;
 
-import android.widget.TextView;
+import android.util.Log;
 
 public class ApplicationData {
-    private int result;
+    private double result;
+     private double total=0;
+     private boolean error =false;
 
     private ApplicationData() {
     }
@@ -17,17 +19,26 @@ public class ApplicationData {
         return INSTANCE;
     }
 
-    public int getResult() {
+    public double getResult() {
         return result;
     }
 
-    public void setResult(int result) {
+    public void setResult(double result) {
         this.result = result;
     }
 
 
+    public boolean isError() {
+        return error;
+    }
+
+    public void setError(boolean error) {
+        this.error = error;
+    }
+
     public void calcul(String editOperation, String operator ){
-       String str =editOperation;
+        setError(false);
+        String str =editOperation;
         if(str.contains("+")){
             operator="\\+";
             String[] tableNumbers = str.split(operator);
@@ -46,12 +57,14 @@ public class ApplicationData {
             if(editOperation!=null){
                // editOperation.setText(String.valueOf(result));
             } if(tableNumbers[1].equals("0")){
-           // editOperation.setText("ERROR");
-             }else if(!tableNumbers[1].equals("0")){
-                result = Integer.valueOf(tableNumbers[0])/Integer.valueOf(tableNumbers[1]);
+                setError(true);
+                // editOperation.setText("ERROR);
+            }else if(!tableNumbers[1].equals("0")){
+                result = Double.valueOf(tableNumbers[0])/Double.valueOf(tableNumbers[1]);
                 //editOperation.setText(String.valueOf(result));
-                ApplicationData.getInstance().setResult((int) result);
-                //(double)Math.round(0.912385 * 100000) / 100000 //Le nombre sera arrondi à 0,91239.
+                ApplicationData.getInstance().setResult(result);
+                 total=result;
+                Log.d("resultat", String.valueOf(result));
             }
         }
 
@@ -72,7 +85,6 @@ public class ApplicationData {
              result =Integer.valueOf(tableNumbers[0])-Integer.valueOf(tableNumbers[1]);
 
             if(editOperation!=null){
-                //editOperation.setText(String.valueOf(result));
                 ApplicationData.getInstance().setResult(result);
             }
         }
